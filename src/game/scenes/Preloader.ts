@@ -232,6 +232,20 @@ export class Preloader extends Scene
             graphics.clear();
         }
 
+        if (!this.textures.exists(TEXTURES.rune))
+        {
+            //  Rune orbiting a powered-up opponent: a ring around a triangle,
+            //  drawn white so the aura can tint it
+            graphics.lineStyle(1.5, 0xffffff, 1);
+            graphics.strokeCircle(8, 8, 6.5);
+            graphics.strokeTriangle(8, 3.5, 12, 10.5, 4, 10.5);
+            graphics.fillStyle(0xffffff, 1);
+            graphics.fillCircle(8, 8.5, 1.2);
+
+            graphics.generateTexture(TEXTURES.rune, 16, 16);
+            graphics.clear();
+        }
+
         if (!this.textures.exists(TEXTURES.airBlade))
         {
             //  Air blade (Ninja skin): a crescent bulging in its direction of

@@ -53,8 +53,22 @@ export const SORCERER_SPACE_VISUAL: SpriteVisual = createStripVisual('sorcerer-s
     fire: 1
 });
 
+//  sorcerer_max_power.png (level 5): frame 0 idle with two staves and red eyes,
+//  frame 1 both staves raised (firing). Frames 2-4 are unused: they repeat the
+//  single-staff pose of sorcerer.png and would break the max power look.
+export const SORCERER_SPACE_MAX_POWER_VISUAL: SpriteVisual = createStripVisual('sorcerer-space-max-power', {
+    path: 'sorcerer_max_power.png',
+    frameSize: 32,
+    idle: [0],
+    fire: 1
+});
+
 /** Every appearance in the game: player skins and opponents. */
-export const ALL_VISUALS: readonly SpriteVisual[] = [...SKINS, SORCERER_SPACE_VISUAL];
+export const ALL_VISUALS: readonly SpriteVisual[] = [
+    ...SKINS,
+    SORCERER_SPACE_VISUAL,
+    SORCERER_SPACE_MAX_POWER_VISUAL
+];
 
 /** Appearances drawn on a template sheet, loaded and sliced by the Preloader. */
 export const STRIP_VISUALS: readonly SpriteVisual[] = ALL_VISUALS

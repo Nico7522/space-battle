@@ -20,7 +20,8 @@ export const TEXTURES = {
     arrowShip: 'player',
     laser: 'laser',
     magicOrb: 'magic-orb',
-    airBlade: 'air-blade'
+    airBlade: 'air-blade',
+    rune: 'rune'
 } as const;
 
 export const AUDIO = {
@@ -30,6 +31,6 @@ export const AUDIO = {
 
 export const SAVE = {
     storageKey: 'shooting-game.save.v1',
-    //  v5 counts the levels won in each campaign stage; older saves are upgraded on load
-    version: 5
+    //  v6 remembers the story dialogues already seen; older saves are upgraded on load
+    version: 6
 } as const;

@@ -13,7 +13,12 @@ import { skinManager } from '../systems/SkinManager';
 import type { DuelOutcome, DuelResult } from '../types/duel';
 import { createSpaceBackdrop } from '../ui/Background';
 import { createExplosionEmitter, spawnExplosion, spawnFloatingText } from '../ui/effects';
+import { FighterAura } from '../ui/FighterAura';
+import { ProjectileTrail } from '../ui/ProjectileTrail';
 import { Hud } from '../ui/Hud';
+import { saveManager } from '../systems/SaveManager';
+import type { DialogueData, DialogueLineView, DialogueResumeData } from './Dialogue';
+import type { Dialogue, DialogueLine } from '../data/dialogues';
 
 const HIT_FLASH_MS = 90;
 const KO_EXPLOSION_PARTICLES = 30;
@@ -34,6 +39,8 @@ export class Game extends Scene {
     private selectedSkinId = '';
     private durationMs = 0;
     private isOver = false;
+    /** Dialogue being played over the paused fight, and what to do once it ends. */
+    private pendingDialogue?: { dialogue: Dialogue; onComplete: () => void };
 
     constructor ()
     {
@@ -60,10 +67,24 @@ export class Game extends Scene {
         this.selectedSkinId = skin.id;
         this.player = new Player(this, GAME_WIDTH / 2, ARENA.playerY, fight.player, skin);
         this.enemy = new Enemy(this, GAME_WIDTH / 2, ARENA.enemyY, fight.opponent, fight.opponentVisual);
+
+        if (fight.opponentAura)
+        {
+            new FighterAura(this, this.enemy, fight.opponentAura);
+        }
+
         this.combat = new CombatSystem(this, this.player, this.enemy);
         this.bot = new BotController(this.enemy, this.player, this.combat, fight.bot);
+
+        if (fight.opponentAura?.projectileTrail)
+        {
+            new ProjectileTrail(this, this.combat, this.enemy.side, fight.opponentAura.projectileTrail);
+        }
+
         this.hud = new Hud(this, this.player, this.enemy, `${fight.label}  •  ${fight.detail.toUpperCase()}`);
         this.explosionEmitter = createExplosionEmitter(this);
+        //  Shown from the start, so the timer is not blank during an intro dialogue
+        this.hud.setTimeLeft(fight.timeLimitMs);
 
         this.combat.on(COMBAT_EVENTS.fired, this.handleFired, this);
         this.combat.on(COMBAT_EVENTS.hit, this.handleHit, this);
@@ -74,7 +95,54 @@ export class Game extends Scene {
         this.events.on(Scenes.Events.RESUME, this.handleResume, this);
         this.events.once(Scenes.Events.SHUTDOWN, this.handleShutdown, this);
 
-        this.hud.showBanner(fight.label, `Face ${this.enemy.character.name}  •  ${fight.detail}`);
+        this.playDialogue(this.fight.introDialogue, () => this.startFight());
+    }
+
+    /**
+     * Plays a story dialogue over the paused arena, the first time it is
+     * reached only, then runs `onComplete`. Without a dialogue to play,
+     * `onComplete` runs right away.
+     */
+    private playDialogue (dialogue: Dialogue | undefined, onComplete: () => void): void
+    {
+        if (!dialogue || saveManager.hasSeenDialogue(dialogue.id))
+        {
+            onComplete();
+
+            return;
+        }
+
+        const data: DialogueData = {
+            lines: dialogue.lines.map((line) => this.toLineView(line)),
+            returnTo: this.scene.key
+        };
+
+        this.pendingDialogue = { dialogue, onComplete };
+        this.scene.launch('Dialogue', data);
+        this.scene.pause();
+    }
+
+    /**
+     * Resolves a speaker to what the dialogue box shows: a name and a portrait.
+     * Portraits use the idle pose, so a fighter caught in its fire pose (or
+     * hidden after a KO) still shows up properly.
+     */
+    private toLineView (line: DialogueLine): DialogueLineView
+    {
+        switch (line.speaker)
+        {
+            case 'player':
+                return { ...line, name: 'You', portraitKey: skinManager.selectedSkin.textureKey };
+            case 'opponent':
+                return { ...line, name: this.enemy.character.name, portraitKey: this.fight.opponentVisual.textureKey };
+            default:
+                return { ...line };
+        }
+    }
+
+    private startFight (): void
+    {
+        this.hud.showBanner(this.fight.label, `Face ${this.enemy.character.name}  •  ${this.fight.detail}`);
     }
 
     update (_time: number, delta: number): void
@@ -182,13 +250,17 @@ export class Game extends Scene {
                 return;
             }
 
-            this.scene.start('Victory', { result, outcome: fightOutcome });
+            //  A won fight may close a chapter of the story before its result screen
+            this.playDialogue(this.fight.outroDialogue, () => {
+                this.scene.start('Victory', { result, outcome: fightOutcome });
+            });
         });
     }
 
     private openPause (): void
     {
-        if (this.isOver || this.scene.isActive('Pause') || this.scene.isActive('SkinSelect'))
+        if (this.isOver || this.scene.isActive('Pause') || this.scene.isActive('SkinSelect')
+            || this.scene.isActive('Dialogue'))
         {
             return;
         }
@@ -197,9 +269,30 @@ export class Game extends Scene {
         this.scene.pause();
     }
 
-    /** When returning from pause, applies the skin if it was changed meanwhile. */
-    private handleResume (): void
+    /**
+     * Resumed after a dialogue: starts the fight. Resumed after a pause:
+     * applies the skin if it was changed meanwhile.
+     */
+    private handleResume (_systems: Scenes.Systems, data?: Partial<DialogueResumeData>): void
     {
+        if (data?.dialogueComplete)
+        {
+            const pending = this.pendingDialogue;
+
+            this.pendingDialogue = undefined;
+
+            //  Keys pressed to read the dialogue must not leak into the fight
+            this.input.keyboard?.resetKeys();
+
+            if (pending)
+            {
+                saveManager.markDialogueSeen(pending.dialogue.id);
+                pending.onComplete();
+            }
+
+            return;
+        }
+
         const skin = skinManager.selectedSkin;
 
         if (skin.id === this.selectedSkinId)

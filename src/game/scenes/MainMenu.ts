@@ -110,7 +110,7 @@ export class MainMenu extends Scene
         {
             buttons.push(
                 {
-                    label: `CONTINUE  •  STAGE ${saved.stageNumber} - LEVEL ${saved.levelNumber}`,
+                    label: `CONTINUE  •  CAMPAIGN ${saved.stageNumber} - LEVEL ${saved.levelNumber}`,
                     onClick: continueCampaign
                 },
                 { label: 'SELECT LEVEL', onClick: () => this.scene.start('LevelSelect') }

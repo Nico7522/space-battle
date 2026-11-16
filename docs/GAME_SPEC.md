@@ -374,6 +374,48 @@ Lorsque le joueur remporte le dernier niveau de la dernière étape :
 
 ---
 
+### 7.7 Lore et dialogues
+
+Le jeu raconte une histoire à travers des dialogues affichés avant certains combats.
+
+**Fonctionnement :**
+
+- Un dialogue est une suite de répliques. Chaque réplique a un locuteur :
+  - `narrator` : la voix omnisciente qui raconte l'histoire, sans nom ni portrait, au centre de l'écran ;
+  - `player` : le personnage du joueur, avec le portrait du skin sélectionné, en bas de l'écran ;
+  - `opponent` : l'adversaire du combat, avec son nom et son portrait, en haut de l'écran.
+- Pendant un dialogue, l'arène est visible mais le combat est en pause (pas de tir, pas de déplacement, chrono arrêté).
+- Le texte apparaît lettre par lettre. Espace, Entrée ou un clic affichent la réplique entière, puis passent à la suivante. Échap passe le dialogue.
+- Un niveau peut avoir un dialogue d'introduction (avant le combat) et un dialogue de conclusion (après une victoire, avant l'écran de victoire).
+- Chaque dialogue n'est joué que la première fois ; les dialogues déjà vus sont enregistrés dans la sauvegarde.
+
+**Dialogues en place :**
+
+- Étape 1, niveau 1 (avant le premier combat) : deux répliques du narrateur, puis une de Sorcerer Space :
+  1. « You are a mysterious traveler in search of adventure. You have decided to leave your planet: you have been tired of it ever since you were born. »
+  2. « After three days of travel, you come across a mysterious figure... A sorcerer? »
+  3. Sorcerer Space : « Ohh, I'm finally going to be able to have some fun! »
+- Étape 1, niveau 5 (après la victoire contre Sorcerer Space), dit par le joueur :
+  1. « A space wizard? I've heard of them on my planet. But I thought they'd all been killed. »
+
+**À venir :** l'histoire du personnage du joueur, celle de Sorcerer Space et des futurs boss, et des répliques des personnages eux-mêmes.
+
+### 7.8 Progression visuelle de Sorcerer Space
+
+À chaque niveau de l'étape 1, Sorcerer Space change d'aspect pour montrer qu'il gagne en puissance. Ces effets sont **purement visuels** : ils ne modifient ni les statistiques, ni la hitbox, ni la taille de collision des projectiles.
+
+| Niveau | Aspect |
+| ------ | ------ |
+| 1 | Aspect de base, sans effet. |
+| 2 | Halo violet pâle qui « respire ». |
+| 3 | Halo plus marqué et particules violettes s'élevant de la robe. |
+| 4 | Halo passant du violet au magenta, plus de particules, deux runes en orbite, traînée lumineuse derrière les orbes. |
+| 5 | Sprite « max power » (deux bâtons, yeux rouges), halo sombre et intense avec un contour rouge, étincelles, trois runes plus rapides, traînée d'ombre quand il se déplace, traînée des orbes plus marquée. |
+
+Les réglages de chaque aura sont des données (un bloc par niveau), réutilisables pour les boss des étapes suivantes.
+
+---
+
 ## 8. Futurs modes de jeu
 
 Le projet doit être conçu pour permettre l'ajout de nouveaux modes.
@@ -557,6 +599,7 @@ Les données de progression d'un mode ne doivent pas être mélangées avec cell
 - Au menu principal, dès qu'un niveau a été gagné :
   - « Continue » reprend au prochain niveau à gagner de la première étape non terminée (ou au dernier niveau de la dernière étape si tout est gagné) ;
   - « Select Level » ouvre l'écran de sélection des niveaux.
+- Dans les menus (bouton « Continue » du menu principal, titre des pages de l'écran de sélection), une étape est affichée « Campaign N » ; en combat et sur l'écran de victoire, elle reste affichée « Stage N ».
 - Écran de sélection : une page par étape, avec des flèches pour changer d'étape. Les niveaux gagnés sont marqués « Completed » et peuvent être rejoués, le prochain niveau à gagner est marqué « Next challenge », les suivants sont verrouillés. Une étape verrouillée indique quelle étape terminer pour la débloquer.
 - Format de sauvegarde v5 : les sauvegardes plus anciennes (v2 à v4) sont reprises automatiquement ; leurs niveaux gagnés sont attribués à l'étape 1.
 

@@ -78,7 +78,7 @@ export class LevelSelect extends Scene {
             this.scene.start('MainMenu');
         });
 
-        this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 24, hasPages ? 'Esc: back   •   ← →: change stage' : 'Esc: back', {
+        this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 24, hasPages ? 'Esc: back   •   ← →: change campaign' : 'Esc: back', {
             fontFamily: 'Arial',
             fontSize: 14,
             color: '#64748b'
@@ -109,7 +109,7 @@ export class LevelSelect extends Scene {
         this.page.add(this.add.text(
             GAME_WIDTH / 2,
             STAGE_TITLE_Y,
-            `STAGE ${stage.number}  •  ${stage.opponentName.toUpperCase()}${pageInfo}`,
+            `CAMPAIGN ${stage.number}  •  ${stage.opponentName.toUpperCase()}${pageInfo}`,
             {
                 fontFamily: 'Arial Black',
                 fontSize: 24,
@@ -122,7 +122,7 @@ export class LevelSelect extends Scene {
             STAGE_HINT_Y,
             stageUnlocked
                 ? 'Replay a level you have won, or take on the next one'
-                : `Complete stage ${stage.number - 1} to unlock this stage`,
+                : `Complete campaign ${stage.number - 1} to unlock this campaign`,
             {
                 fontFamily: 'Arial',
                 fontSize: 17,

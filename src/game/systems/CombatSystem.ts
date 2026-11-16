@@ -2,7 +2,7 @@ import { Events, Physics } from 'phaser';
 import type { Scene } from 'phaser';
 import type { Fighter } from '../entities/Fighter';
 import { Projectile } from '../entities/Projectile';
-import type { DuelEndReason, DuelOutcome } from '../types/duel';
+import type { DuelEndReason, DuelOutcome, FighterSide } from '../types/duel';
 
 const MAX_PROJECTILES = 60;
 
@@ -138,6 +138,18 @@ export class CombatSystem extends Events.EventEmitter {
         }
 
         return incoming;
+    }
+
+    /** Calls `callback` for each projectile in flight fired by `owner`. */
+    forEachActiveProjectile (owner: FighterSide, callback: (projectile: Projectile) => void): void
+    {
+        for (const child of this.projectiles.getChildren())
+        {
+            if (child instanceof Projectile && child.active && child.owner === owner)
+            {
+                callback(child);
+            }
+        }
     }
 
     /** Removes every projectile in flight (end of the fight). */

@@ -1,6 +1,7 @@
 import { AUTO, Scale } from 'phaser';
 import { Boot } from '../scenes/Boot';
 import { GameOver } from '../scenes/GameOver';
+import { Dialogue } from '../scenes/Dialogue';
 import { Game as MainGame } from '../scenes/Game';
 import { LevelSelect } from '../scenes/LevelSelect';
 import { MainMenu } from '../scenes/MainMenu';
@@ -44,6 +45,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
         GameOver,
         Victory,
         SkinSelect,
-        LevelSelect
+        LevelSelect,
+        Dialogue
     ]
 };

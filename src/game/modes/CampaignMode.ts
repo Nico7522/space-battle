@@ -126,8 +126,11 @@ export class CampaignMode implements GameMode {
             player: withOverrides(PLAYER_CHARACTER, level.player),
             opponent: level.opponent.character,
             opponentVisual: level.opponent.visual,
+            opponentAura: level.opponent.aura,
             bot: level.opponent.bot,
-            timeLimitMs: level.timeLimitMs ?? CAMPAIGN_TIME_LIMIT_MS
+            timeLimitMs: level.timeLimitMs ?? CAMPAIGN_TIME_LIMIT_MS,
+            introDialogue: level.introDialogue,
+            outroDialogue: level.outroDialogue
         };
     }
 

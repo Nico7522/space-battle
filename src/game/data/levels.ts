@@ -1,7 +1,16 @@
+import {
+    SORCERER_SPACE_AURA_LEVEL_2,
+    SORCERER_SPACE_AURA_LEVEL_3,
+    SORCERER_SPACE_AURA_LEVEL_4,
+    SORCERER_SPACE_AURA_LEVEL_5
+} from './auras';
+import type { AuraConfig } from './auras';
 import { SORCERER_SPACE_BOT } from './bots';
 import type { BotConfig } from './bots';
-import { SORCERER_SPACE, SORCERER_SPACE_VISUAL } from './characters';
+import { SORCERER_SPACE, SORCERER_SPACE_MAX_POWER_VISUAL, SORCERER_SPACE_VISUAL } from './characters';
 import type { CharacterConfig } from './characters';
+import { STAGE_1_INTRO, STAGE_1_OUTRO } from './dialogues';
+import type { Dialogue } from './dialogues';
 import type { SpriteVisual } from './skins';
 
 /** Combat stats a level may change for a fighter, without touching the base character. */
@@ -19,6 +28,8 @@ export interface LevelOpponent {
     character: CharacterConfig;
     visual: SpriteVisual;
     bot: BotConfig;
+    /** Visual effect showing how strong the opponent is in this level. */
+    aura?: AuraConfig;
 }
 
 export interface CampaignLevel {
@@ -30,6 +41,10 @@ export interface CampaignLevel {
     player?: FighterOverrides;
     /** Fight duration for this level, if different from the campaign default. */
     timeLimitMs?: number;
+    /** Story dialogue shown before the fight, the first time the level is played. */
+    introDialogue?: Dialogue;
+    /** Story dialogue shown after the fight is won, the first time it is won. */
+    outroDialogue?: Dialogue;
 }
 
 /**
@@ -71,6 +86,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         //  fire between its shots and its orbs travel faster
         number: 1,
         difficulty: 'Easy',
+        introDialogue: STAGE_1_INTRO,
         opponent: {
             character: withOverrides(SORCERER_SPACE, {
                 speed: 195,
@@ -102,6 +118,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         number: 2,
         difficulty: 'Easy to Medium',
         opponent: {
+            aura: SORCERER_SPACE_AURA_LEVEL_2,
             character: withOverrides(SORCERER_SPACE, {
                 speed: 220,
                 ammunition: 38,
@@ -132,6 +149,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         number: 3,
         difficulty: 'Medium',
         opponent: {
+            aura: SORCERER_SPACE_AURA_LEVEL_3,
             character: withOverrides(SORCERER_SPACE, {
                 speed: 245,
                 ammunition: 42,
@@ -162,6 +180,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         number: 4,
         difficulty: 'Hard',
         opponent: {
+            aura: SORCERER_SPACE_AURA_LEVEL_4,
             character: withOverrides(SORCERER_SPACE, {
                 speed: 270,
                 ammunition: 46,
@@ -192,7 +211,9 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         //  dodge chance stay below perfect, so it can still be beaten.
         number: 5,
         difficulty: 'Very Hard',
+        outroDialogue: STAGE_1_OUTRO,
         opponent: {
+            aura: SORCERER_SPACE_AURA_LEVEL_5,
             character: withOverrides(SORCERER_SPACE, {
                 speed: 300,
                 ammunition: 50,
@@ -200,7 +221,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
                 damage: 13,
                 projectileSpeed: 700
             }),
-            visual: SORCERER_SPACE_VISUAL,
+            visual: SORCERER_SPACE_MAX_POWER_VISUAL,
             bot: {
                 ...SORCERER_SPACE_BOT,
                 reactionMs: 160,

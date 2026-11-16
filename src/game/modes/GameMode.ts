@@ -1,5 +1,7 @@
+import type { AuraConfig } from '../data/auras';
 import type { BotConfig } from '../data/bots';
 import type { CharacterConfig } from '../data/characters';
+import type { Dialogue } from '../data/dialogues';
 import type { SpriteVisual } from '../data/skins';
 import type { DuelResult } from '../types/duel';
 
@@ -12,9 +14,15 @@ export interface FightSetup {
     player: CharacterConfig;
     opponent: CharacterConfig;
     opponentVisual: SpriteVisual;
+    /** Purely visual effect around the opponent, if any. */
+    opponentAura?: AuraConfig;
     bot: BotConfig;
     /** Fight duration; when it runs out, the fighter with the fewer HP loses. */
     timeLimitMs: number;
+    /** Story dialogue to play before the fight starts, if any. */
+    introDialogue?: Dialogue;
+    /** Story dialogue to play once the fight is won, before the result screen. */
+    outroDialogue?: Dialogue;
 }
 
 /**
