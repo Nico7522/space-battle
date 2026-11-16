@@ -21,8 +21,6 @@ export interface SaveData {
     bestScore: number;
     soundEnabled: boolean;
     musicEnabled: boolean;
-    /** Story dialogues already played, so they are not shown again on every retry. */
-    seenDialogues: string[];
     campaign: CampaignProgress;
 }
 
@@ -40,7 +38,6 @@ const createDefaultData = (): SaveData => ({
     bestScore: 0,
     soundEnabled: true,
     musicEnabled: false,
-    seenDialogues: [],
     campaign: createDefaultCampaign()
 });
 
@@ -121,11 +118,7 @@ const sanitizeData = (value: unknown): SaveData => {
         bestScore: sanitizeBestScore(value.bestScore),
         soundEnabled: sanitizeBoolean(value.soundEnabled, fallback.soundEnabled),
         musicEnabled: sanitizeBoolean(value.musicEnabled, fallback.musicEnabled),
-        campaign: sanitizeCampaign(value.campaign),
-        //  Saves older than v6 have no list: every dialogue is still unseen
-        seenDialogues: Array.isArray(value.seenDialogues)
-            ? value.seenDialogues.filter((id): id is string => typeof id === 'string')
-            : []
+        campaign: sanitizeCampaign(value.campaign)
     };
 };
 
@@ -178,22 +171,6 @@ export class SaveManager {
         }
 
         this.data.campaign.stages[stageId] = levelNumber;
-        this.save();
-    }
-
-    hasSeenDialogue (dialogueId: string): boolean
-    {
-        return this.data.seenDialogues.includes(dialogueId);
-    }
-
-    markDialogueSeen (dialogueId: string): void
-    {
-        if (this.hasSeenDialogue(dialogueId))
-        {
-            return;
-        }
-
-        this.data.seenDialogues.push(dialogueId);
         this.save();
     }
 

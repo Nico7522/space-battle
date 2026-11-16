@@ -387,7 +387,7 @@ Le jeu raconte une histoire à travers des dialogues affichés avant certains co
 - Pendant un dialogue, l'arène est visible mais le combat est en pause (pas de tir, pas de déplacement, chrono arrêté).
 - Le texte apparaît lettre par lettre. Espace, Entrée ou un clic affichent la réplique entière, puis passent à la suivante. Échap passe le dialogue.
 - Un niveau peut avoir un dialogue d'introduction (avant le combat) et un dialogue de conclusion (après une victoire, avant l'écran de victoire).
-- Chaque dialogue n'est joué que la première fois ; les dialogues déjà vus sont enregistrés dans la sauvegarde.
+- Les dialogues sont joués à chaque fois (Échap permet de les passer).
 
 **Dialogues en place :**
 
@@ -395,8 +395,9 @@ Le jeu raconte une histoire à travers des dialogues affichés avant certains co
   1. « You are a mysterious traveler in search of adventure. You have decided to leave your planet: you have been tired of it ever since you were born. »
   2. « After three days of travel, you come across a mysterious figure... A sorcerer? »
   3. Sorcerer Space : « Ohh, I'm finally going to be able to have some fun! »
-- Étape 1, niveau 5 (après la victoire contre Sorcerer Space), dit par le joueur :
-  1. « A space wizard? I've heard of them on my planet. But I thought they'd all been killed. »
+- Étape 1, niveau 5 (après la victoire contre Sorcerer Space) :
+  1. Sorcerer Space : « I'm running out of stamina... »
+  2. Le joueur : « A space wizard? I've heard of them on my planet. But I thought they'd all been killed. »
 
 **À venir :** l'histoire du personnage du joueur, celle de Sorcerer Space et des futurs boss, et des répliques des personnages eux-mêmes.
 

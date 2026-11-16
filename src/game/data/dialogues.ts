@@ -45,6 +45,10 @@ export const STAGE_1_OUTRO: Dialogue = {
     id: 'stage-1-outro',
     lines: [
         {
+            speaker: 'opponent',
+            text: "I'm running out of stamina..."
+        },
+        {
             speaker: 'player',
             text: "A space wizard? I've heard of them on my planet. But I thought they'd all been killed."
         }

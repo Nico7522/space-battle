@@ -16,7 +16,6 @@ import { createExplosionEmitter, spawnExplosion, spawnFloatingText } from '../ui
 import { FighterAura } from '../ui/FighterAura';
 import { ProjectileTrail } from '../ui/ProjectileTrail';
 import { Hud } from '../ui/Hud';
-import { saveManager } from '../systems/SaveManager';
 import type { DialogueData, DialogueLineView, DialogueResumeData } from './Dialogue';
 import type { Dialogue, DialogueLine } from '../data/dialogues';
 
@@ -99,13 +98,13 @@ export class Game extends Scene {
     }
 
     /**
-     * Plays a story dialogue over the paused arena, the first time it is
-     * reached only, then runs `onComplete`. Without a dialogue to play,
+     * Plays a story dialogue over the paused arena (every time the fight is
+     * reached), then runs `onComplete`. Without a dialogue to play,
      * `onComplete` runs right away.
      */
     private playDialogue (dialogue: Dialogue | undefined, onComplete: () => void): void
     {
-        if (!dialogue || saveManager.hasSeenDialogue(dialogue.id))
+        if (!dialogue || dialogue.lines.length === 0)
         {
             onComplete();
 
@@ -286,7 +285,6 @@ export class Game extends Scene {
 
             if (pending)
             {
-                saveManager.markDialogueSeen(pending.dialogue.id);
                 pending.onComplete();
             }
 

@@ -31,6 +31,7 @@ export const AUDIO = {
 
 export const SAVE = {
     storageKey: 'shooting-game.save.v1',
-    //  v6 remembers the story dialogues already seen; older saves are upgraded on load
+    //  v6 briefly stored the story dialogues already seen; that list is now
+    //  ignored on load. Older saves are upgraded on load
     version: 6
 } as const;

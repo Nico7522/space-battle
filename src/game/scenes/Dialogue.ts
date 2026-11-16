@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants';
+import { ARENA, GAME_HEIGHT, GAME_WIDTH } from '../config/constants';
 import type { DialogueSpeaker } from '../data/dialogues';
 
 /** A line ready to display: the speaker is already resolved to a name and a portrait. */
@@ -29,13 +29,15 @@ const PORTRAIT_SIZE = 96;
 const TYPE_DELAY_MS = 28;
 const OVERLAY_ALPHA = 0.55;
 const DEPTH = 100;
+//  Space kept between a speaking fighter's center and the edge of its box
+const FIGHTER_CLEARANCE = 80;
 
 //  Characters speak near where they stand: the opponent at the top of the
 //  arena, the player at the bottom; the narrator speaks from the center
 const BOX_Y: Record<DialogueSpeaker, number> = {
     narrator: GAME_HEIGHT / 2,
-    opponent: 300,
-    player: 470
+    opponent: ARENA.enemyY + FIGHTER_CLEARANCE + BOX_HEIGHT / 2,
+    player: ARENA.playerY - FIGHTER_CLEARANCE - BOX_HEIGHT / 2
 };
 
 const NAME_COLORS: Record<DialogueSpeaker, string> = {
@@ -157,6 +159,12 @@ export class Dialogue extends Scene {
     {
         this.typeTimer?.remove(false);
         this.visibleChars = 0;
+
+        //  A repeat count of -1 would make the timer endless
+        if (text.length === 0)
+        {
+            return;
+        }
 
         this.typeTimer = this.time.addEvent({
             delay: TYPE_DELAY_MS,

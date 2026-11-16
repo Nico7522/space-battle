@@ -41,9 +41,9 @@ export interface CampaignLevel {
     player?: FighterOverrides;
     /** Fight duration for this level, if different from the campaign default. */
     timeLimitMs?: number;
-    /** Story dialogue shown before the fight, the first time the level is played. */
+    /** Story dialogue shown before the fight, each time the level is played. */
     introDialogue?: Dialogue;
-    /** Story dialogue shown after the fight is won, the first time it is won. */
+    /** Story dialogue shown each time the fight is won, before the result screen. */
     outroDialogue?: Dialogue;
 }
 
