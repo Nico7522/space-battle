@@ -42,7 +42,7 @@ Then open http://localhost:8080.
 | `npm run build-nolog` | Build the production version into `dist/` |
 | `npx tsc --noEmit` | Run the TypeScript type check (the build alone does not check types) |
 
-`npm run dev` and `npm run build` do the same, but first run `log.js`, a script inherited from the Phaser template that sends an anonymous usage ping to Phaser Studio. The `-nolog` variants skip it.
+`npm run dev` and `npm run build` are the same commands; the `-nolog` names are kept for compatibility. No usage data is sent anywhere.
 
 ## Project structure
 

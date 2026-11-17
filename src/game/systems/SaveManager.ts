@@ -1,4 +1,5 @@
 import { SAVE } from '../config/constants';
+import { CAMPAIGN_STAGES } from '../data/levels';
 import { DEFAULT_SKIN_ID, SKIN_IDS } from '../data/skins';
 
 /** Progression of the Campaign mode, kept apart from the other modes. */
@@ -42,7 +43,7 @@ const createDefaultData = (): SaveData => ({
 });
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === 'object' && value !== null;
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
 
 const sanitizeBestScore = (value: unknown): number => {
@@ -71,11 +72,15 @@ const sanitizeCampaign = (value: unknown): CampaignProgress => {
     {
         const stages: Record<string, number> = {};
 
-        for (const [stageId, count] of Object.entries(value.stages))
+        //  Only known stages are kept, so an edited save cannot pile up
+        //  arbitrary keys that would be written back on every save
+        for (const stage of CAMPAIGN_STAGES)
         {
-            if (isLevelCount(count))
+            const count = value.stages[stage.id];
+
+            if (Object.hasOwn(value.stages, stage.id) && isLevelCount(count))
             {
-                stages[stageId] = count;
+                stages[stage.id] = count;
             }
         }
 
@@ -182,21 +187,6 @@ export class SaveManager {
         }
 
         this.data.selectedSkinId = skinId;
-        this.save();
-
-        return true;
-    }
-
-    updateBestScore (score: number): boolean
-    {
-        const sanitized = sanitizeBestScore(score);
-
-        if (sanitized <= this.data.bestScore)
-        {
-            return false;
-        }
-
-        this.data.bestScore = sanitized;
         this.save();
 
         return true;

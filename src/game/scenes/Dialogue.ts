@@ -56,6 +56,7 @@ export class Dialogue extends Scene {
     private lines: readonly DialogueLineView[] = [];
     private returnTo = '';
     private lineIndex = 0;
+    private finished = false;
     private visibleChars = 0;
     private typeTimer?: Phaser.Time.TimerEvent;
     private box!: Phaser.GameObjects.Container;
@@ -71,6 +72,7 @@ export class Dialogue extends Scene {
         this.lines = data.lines;
         this.returnTo = data.returnTo;
         this.lineIndex = 0;
+        this.finished = false;
     }
 
     create (): void
@@ -206,6 +208,14 @@ export class Dialogue extends Scene {
 
     private finish (): void
     {
+        //  Two inputs in the same frame (e.g. Space then Esc) must not resume twice
+        if (this.finished)
+        {
+            return;
+        }
+
+        this.finished = true;
+
         const resumeData: DialogueResumeData = { dialogueComplete: true };
 
         this.typeTimer?.remove(false);

@@ -22,8 +22,8 @@ export class AudioManager {
     private sfxGain: GainNode | null = null;
     private musicGain: GainNode | null = null;
     private noiseBuffer: AudioBuffer | null = null;
-    private musicStarted = false;
-    private musicOscillators: OscillatorNode[] = [];
+    /** Running music oscillators (voices and filter LFO), stopped when the music is turned off. */
+    private musicSources: OscillatorNode[] = [];
 
     get soundEnabled (): boolean
     {
@@ -69,7 +69,11 @@ export class AudioManager {
         if (enabled)
         {
             this.unlock();
+
+            return;
         }
+
+        this.stopMusic();
     }
 
     playClick (): void
@@ -123,16 +127,10 @@ export class AudioManager {
         this.playTone(180, 0.22, 'triangle', 0.28, 60);
     }
 
-    playLevel (): void
-    {
-        this.playToneAt(440, 0, 0.12, 'triangle', 0.18);
-        this.playToneAt(660, 0.1, 0.22, 'triangle', 0.18);
-    }
-
     playGameOver (): void
     {
         this.playTone(320, 0.7, 'sawtooth', 0.22, 70);
-        this.playToneAt(160, 0.06, 0.65, 'triangle', 0.2 * 0.0001);
+        this.playToneAt(160, 0.06, 0.65, 'triangle', 0.2);
     }
 
     playVictory (): void
@@ -141,15 +139,6 @@ export class AudioManager {
 
         notes.forEach((frequency, index) => {
             this.playToneAt(frequency, index * 0.11, 0.3, 'triangle', 0.2);
-        });
-    }
-
-    playRecord (): void
-    {
-        const notes = [784, 988, 1175, 1568];
-
-        notes.forEach((frequency, index) => {
-            this.playToneAt(frequency, index * 0.07, 0.26, 'sine', 0.18);
         });
     }
 
@@ -204,7 +193,7 @@ export class AudioManager {
 
     private startMusic (): void
     {
-        if (this.musicStarted || !this.context || !this.musicGain)
+        if (this.musicSources.length > 0 || !this.context || !this.musicGain)
         {
             return;
         }
@@ -223,6 +212,7 @@ export class AudioManager {
         lfo.connect(lfoGain);
         lfoGain.connect(filter.frequency);
         lfo.start();
+        this.musicSources.push(lfo);
 
         filter.connect(this.musicGain);
 
@@ -241,10 +231,20 @@ export class AudioManager {
             voiceGain.connect(filter);
             oscillator.start();
 
-            this.musicOscillators.push(oscillator);
+            this.musicSources.push(oscillator);
         });
+    }
 
-        this.musicStarted = true;
+    /** Stops the music oscillators, so a muted music no longer costs any audio processing. */
+    private stopMusic (): void
+    {
+        for (const source of this.musicSources)
+        {
+            source.stop();
+            source.disconnect();
+        }
+
+        this.musicSources = [];
     }
 
     private getNoiseBuffer (context: AudioContext): AudioBuffer

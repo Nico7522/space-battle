@@ -358,6 +358,7 @@ Le mode Campaign ne conserve donc pas les dégâts subis d'un niveau au suivant.
 - Un compte à rebours est affiché pendant le combat ; il s'arrête pendant la pause.
 - À la fin du temps, le combattant qui a le moins de PV perd. En cas d'égalité, le joueur perd.
 - Un combattant qui tombe à 0 PV avant la fin du temps perd immédiatement.
+- Si les deux combattants tombent à 0 PV en même temps, c'est une égalité : le joueur perd.
 
 **Début du combat :**
 
