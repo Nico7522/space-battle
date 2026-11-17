@@ -21,6 +21,7 @@ import type { Dialogue, DialogueLine } from '../data/dialogues';
 
 const HIT_FLASH_MS = 90;
 const KO_EXPLOSION_PARTICLES = 30;
+const OPPONENT_LEAVE_MS = 900;
 
 /**
  * Duel scene: it builds the arena and wires the systems together (input,
@@ -38,8 +39,8 @@ export class Game extends Scene {
     private selectedSkinId = '';
     private durationMs = 0;
     private isOver = false;
-    /** Dialogue being played over the paused fight, and what to do once it ends. */
-    private pendingDialogue?: { dialogue: Dialogue; onComplete: () => void };
+    /** What to do once the dialogue played over the paused fight ends. */
+    private onDialogueEnd?: () => void;
 
     constructor ()
     {
@@ -104,21 +105,52 @@ export class Game extends Scene {
      */
     private playDialogue (dialogue: Dialogue | undefined, onComplete: () => void): void
     {
-        if (!dialogue || dialogue.lines.length === 0)
+        this.playLines(dialogue?.lines ?? [], onComplete);
+    }
+
+    private playLines (lines: readonly DialogueLine[], onComplete: () => void): void
+    {
+        if (lines.length === 0)
         {
             onComplete();
 
             return;
         }
 
+        //  The dialogue is cut where the opponent leaves: the arena must be
+        //  running, not paused, to show it flying away
+        const leaveIndex = lines.findIndex((line) => line.opponentLeaves);
+        const shownLines = leaveIndex === -1 ? lines : lines.slice(0, leaveIndex + 1);
+        const onShown = leaveIndex === -1
+            ? onComplete
+            : () => this.makeOpponentLeave(() => this.playLines(lines.slice(leaveIndex + 1), onComplete));
+
         const data: DialogueData = {
-            lines: dialogue.lines.map((line) => this.toLineView(line)),
+            lines: shownLines.map((line) => this.toLineView(line)),
             returnTo: this.scene.key
         };
 
-        this.pendingDialogue = { dialogue, onComplete };
+        this.onDialogueEnd = onShown;
         this.scene.launch('Dialogue', data);
         this.scene.pause();
+    }
+
+    /** The opponent flies off the top of the screen, then `onGone` runs. */
+    private makeOpponentLeave (onGone: () => void): void
+    {
+        //  Without its body, the opponent is no longer kept inside the arena
+        this.enemy.disableBody(false, false);
+
+        this.tweens.add({
+            targets: this.enemy,
+            y: -this.enemy.displayHeight,
+            duration: OPPONENT_LEAVE_MS,
+            ease: 'Back.easeIn',
+            onComplete: () => {
+                this.enemy.setVisible(false);
+                onGone();
+            }
+        });
     }
 
     /**
@@ -126,16 +158,21 @@ export class Game extends Scene {
      * Portraits use the idle pose, so a fighter caught in its fire pose (or
      * hidden after a KO) still shows up properly.
      */
-    private toLineView (line: DialogueLine): DialogueLineView
+    private toLineView ({ speaker, text }: DialogueLine): DialogueLineView
     {
-        switch (line.speaker)
+        switch (speaker)
         {
             case 'player':
-                return { ...line, name: 'You', portraitKey: skinManager.selectedSkin.textureKey };
+                return { speaker, text, name: 'You', portraitKey: skinManager.selectedSkin.textureKey };
             case 'opponent':
-                return { ...line, name: this.enemy.character.name, portraitKey: this.fight.opponentVisual.textureKey };
+                return {
+                    speaker,
+                    text,
+                    name: this.enemy.character.name,
+                    portraitKey: this.fight.opponentVisual.textureKey
+                };
             default:
-                return { ...line };
+                return { speaker, text };
         }
     }
 
@@ -218,8 +255,9 @@ export class Game extends Scene {
 
         const playerWon = outcome.winner === 'player';
         const loser = playerWon ? this.enemy : this.player;
+        const loserSurvives = playerWon && this.fight.opponentSurvivesKo === true;
 
-        if (outcome.reason === 'ko')
+        if (outcome.reason === 'ko' && !loserSurvives)
         {
             spawnExplosion(this, this.explosionEmitter, loser.x, loser.y, 0xff6b6b, KO_EXPLOSION_PARTICLES);
             loser.disableBody(true, true);
@@ -276,17 +314,13 @@ export class Game extends Scene {
     {
         if (data?.dialogueComplete)
         {
-            const pending = this.pendingDialogue;
+            const onDialogueEnd = this.onDialogueEnd;
 
-            this.pendingDialogue = undefined;
+            this.onDialogueEnd = undefined;
 
             //  Keys pressed to read the dialogue must not leak into the fight
             this.input.keyboard?.resetKeys();
-
-            if (pending)
-            {
-                pending.onComplete();
-            }
+            onDialogueEnd?.();
 
             return;
         }

@@ -23,6 +23,8 @@ export interface FightSetup {
     introDialogue?: Dialogue;
     /** Story dialogue to play once the fight is won, before the result screen. */
     outroDialogue?: Dialogue;
+    /** When true, the opponent stays in the arena after a KO instead of exploding. */
+    opponentSurvivesKo?: boolean;
 }
 
 /**
@@ -40,6 +42,8 @@ export interface FightOutcome {
      * mode, e.g. the last level of a campaign stage.
      */
     milestoneTitle?: string;
+    /** Text of the victory screen replacing the default one, if any. */
+    victorySubtitle?: string;
     /** Label of the button leading to the next fight, e.g. "NEXT LEVEL". */
     nextFightLabel?: string;
 }

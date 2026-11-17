@@ -389,6 +389,7 @@ Le jeu raconte une histoire à travers des dialogues affichés avant certains co
 - Le texte apparaît lettre par lettre. Espace, Entrée ou un clic affichent la réplique entière, puis passent à la suivante. Échap passe le dialogue.
 - Un niveau peut avoir un dialogue d'introduction (avant le combat) et un dialogue de conclusion (après une victoire, avant l'écran de victoire).
 - Les dialogues sont joués à chaque fois (Échap permet de les passer).
+- Un niveau peut indiquer que l'adversaire survit au KO : il n'explose pas et reste visible dans l'arène, par exemple pour parler dans le dialogue de conclusion.
 
 **Dialogues en place :**
 
@@ -396,8 +397,18 @@ Le jeu raconte une histoire à travers des dialogues affichés avant certains co
   1. « You are a mysterious traveler in search of adventure. You have decided to leave your planet: you have been tired of it ever since you were born. »
   2. « After three days of travel, you come across a mysterious figure... A sorcerer? »
   3. Sorcerer Space : « Ohh, I'm finally going to be able to have some fun! »
-- Étape 1, niveau 5 (après la victoire contre Sorcerer Space) :
-  1. Sorcerer Space : « I'm running out of stamina... »
+- Étape 1, niveau 1 (après la victoire) : Sorcerer Space n'explose pas, il reste dans l'arène et dit :
+  1. Sorcerer Space : « Not bad. This is starting to get interesting. »
+
+  L'écran de victoire affiche ensuite « The sorcerer has become interested in your abilities. » à la place de « Sorcerer Space is defeated! ».
+- Étape 1, niveau 2 (après la victoire) : Sorcerer Space n'explose pas, il reste dans l'arène et dit :
+  1. Sorcerer Space : « You're really not bad. »
+- Étape 1, niveau 3 (après la victoire) : Sorcerer Space n'explose pas et dit :
+  1. Sorcerer Space : « Let's use 50% of my power. »
+- Étape 1, niveau 4 (après la victoire) : Sorcerer Space n'explose pas et dit :
+  1. Sorcerer Space : « You're making me angry now... I will show you the full potential of the sorcerer race. »
+- Étape 1, niveau 5 (après la victoire contre Sorcerer Space) : il n'explose pas ; après sa réplique, il s'enfuit par le haut de l'écran, puis le joueur parle :
+  1. Sorcerer Space : « I'm running out of stamina... I must escape, fast! »
   2. Le joueur : « A space wizard? I've heard of them on my planet. But I thought they'd all been killed. »
 
 **À venir :** l'histoire du personnage du joueur, celle de Sorcerer Space et des futurs boss, et des répliques des personnages eux-mêmes.

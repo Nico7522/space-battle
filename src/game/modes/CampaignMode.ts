@@ -130,7 +130,8 @@ export class CampaignMode implements GameMode {
             bot: level.opponent.bot,
             timeLimitMs: level.timeLimitMs ?? CAMPAIGN_TIME_LIMIT_MS,
             introDialogue: level.introDialogue,
-            outroDialogue: level.outroDialogue
+            outroDialogue: level.outroDialogue,
+            opponentSurvivesKo: level.opponentSurvivesKo
         };
     }
 
@@ -147,7 +148,11 @@ export class CampaignMode implements GameMode {
 
         if (!this.isLastLevelOfStage)
         {
-            return { resolution: 'won', nextFightLabel: 'NEXT LEVEL' };
+            return {
+                resolution: 'won',
+                victorySubtitle: this.level.victorySubtitle,
+                nextFightLabel: 'NEXT LEVEL'
+            };
         }
 
         if (this.isLastStage)
@@ -158,6 +163,7 @@ export class CampaignMode implements GameMode {
         return {
             resolution: 'won',
             milestoneTitle: `STAGE ${this.stage.number} COMPLETE`,
+            victorySubtitle: this.level.victorySubtitle,
             nextFightLabel: 'NEXT STAGE'
         };
     }

@@ -58,7 +58,7 @@ export class Victory extends Scene {
 
         createResultScreen(this, {
             title: outcome.milestoneTitle ?? 'VICTORY',
-            subtitle: VICTORY_SUBTITLES[result.reason](result.enemyName),
+            subtitle: outcome.victorySubtitle ?? VICTORY_SUBTITLES[result.reason](result.enemyName),
             titleColor: '#fbbf24',
             result,
             buttons: [

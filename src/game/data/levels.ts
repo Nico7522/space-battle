@@ -9,7 +9,14 @@ import { SORCERER_SPACE_BOT } from './bots';
 import type { BotConfig } from './bots';
 import { SORCERER_SPACE, SORCERER_SPACE_MAX_POWER_VISUAL, SORCERER_SPACE_VISUAL } from './characters';
 import type { CharacterConfig } from './characters';
-import { STAGE_1_INTRO, STAGE_1_OUTRO } from './dialogues';
+import {
+    STAGE_1_INTRO,
+    STAGE_1_LEVEL_1_OUTRO,
+    STAGE_1_LEVEL_2_OUTRO,
+    STAGE_1_LEVEL_3_OUTRO,
+    STAGE_1_LEVEL_4_OUTRO,
+    STAGE_1_OUTRO
+} from './dialogues';
 import type { Dialogue } from './dialogues';
 import type { SpriteVisual } from './skins';
 
@@ -45,6 +52,13 @@ export interface CampaignLevel {
     introDialogue?: Dialogue;
     /** Story dialogue shown each time the fight is won, before the result screen. */
     outroDialogue?: Dialogue;
+    /**
+     * When true, a KO no longer blows the opponent up: it stays in the arena,
+     * e.g. because it still has something to say in the outro dialogue.
+     */
+    opponentSurvivesKo?: boolean;
+    /** Text of the victory screen replacing the default one, e.g. to follow the story. */
+    victorySubtitle?: string;
 }
 
 /**
@@ -87,6 +101,9 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         number: 1,
         difficulty: 'Easy',
         introDialogue: STAGE_1_INTRO,
+        outroDialogue: STAGE_1_LEVEL_1_OUTRO,
+        opponentSurvivesKo: true,
+        victorySubtitle: 'The sorcerer has become interested in your abilities.',
         opponent: {
             character: withOverrides(SORCERER_SPACE, {
                 speed: 195,
@@ -117,6 +134,8 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         //  place is now punished
         number: 2,
         difficulty: 'Easy to Medium',
+        outroDialogue: STAGE_1_LEVEL_2_OUTRO,
+        opponentSurvivesKo: true,
         opponent: {
             aura: SORCERER_SPACE_AURA_LEVEL_2,
             character: withOverrides(SORCERER_SPACE, {
@@ -148,6 +167,8 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         //  and dodges more than every other projectile
         number: 3,
         difficulty: 'Medium',
+        outroDialogue: STAGE_1_LEVEL_3_OUTRO,
+        opponentSurvivesKo: true,
         opponent: {
             aura: SORCERER_SPACE_AURA_LEVEL_3,
             character: withOverrides(SORCERER_SPACE, {
@@ -179,6 +200,8 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         //  for gaps in the fire of the player most of the time
         number: 4,
         difficulty: 'Hard',
+        outroDialogue: STAGE_1_LEVEL_4_OUTRO,
+        opponentSurvivesKo: true,
         opponent: {
             aura: SORCERER_SPACE_AURA_LEVEL_4,
             character: withOverrides(SORCERER_SPACE, {
@@ -212,6 +235,7 @@ const SORCERER_SPACE_LEVELS: readonly CampaignLevel[] = [
         number: 5,
         difficulty: 'Very Hard',
         outroDialogue: STAGE_1_OUTRO,
+        opponentSurvivesKo: true,
         opponent: {
             aura: SORCERER_SPACE_AURA_LEVEL_5,
             character: withOverrides(SORCERER_SPACE, {

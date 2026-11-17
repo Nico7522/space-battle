@@ -146,7 +146,7 @@ export class Dialogue extends Scene {
         this.box.add(this.add.text(
             BOX_WIDTH / 2 - BOX_PADDING,
             BOX_HEIGHT / 2 - 14,
-            isLastLine ? 'Space / Click: start' : 'Space / Click: continue   •   Esc: skip',
+            isLastLine ? 'Space / Click: continue' : 'Space / Click: continue   •   Esc: skip',
             {
                 fontFamily: 'Arial',
                 fontSize: 13,
